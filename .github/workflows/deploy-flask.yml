@@ -10,10 +10,6 @@ jobs:
     name: Flask Continuous Integration
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: flask_api
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,12 +20,10 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Run basic Flask check
-        run: |
-          python -m py_compile app.py
+        run: python -m py_compile app.py
 
   cd:
     name: Flask Continuous Deployment
@@ -41,8 +35,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create deployment package
-        run: |
-          zip -r flask-deploy.zip flask_api -x "*.git*" "*venv*" "*__pycache__*"
+        run: zip -r flask-deploy.zip . -x "*.git*" "*venv*" "*__pycache__*"
 
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v22
