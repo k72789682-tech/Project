@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #5f0fd1, #4f46e5);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: auto;
+            padding: 40px 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.12);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .card h2 {
+            margin-top: 0;
+        }
+
+        a.button {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 12px 18px;
+            border-radius: 12px;
+            background: white;
+            color: #5f0fd1;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .logout {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .logout a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            background: rgba(255,255,255,0.15);
+            padding: 12px 20px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, {{ username }}</h1>
+
+        <div class="grid">
+            <div class="card">
+                <h2>Tasks</h2>
+                <p>Create and manage your tasks.</p>
+                <a class="button" href="/tasks/">Open Tasks</a>
+            </div>
+
+            <div class="card">
+                <h2>Set Reminder</h2>
+                <p>Create reminders for your tasks.</p>
+                <a class="button" href="/reminder/">Set Reminder</a>
+            </div>
+
+            <div class="card">
+                <h2>Calendar Sync</h2>
+                <p>Sync a task with Google Calendar.</p>
+                <a class="button" href="/calendar-sync/">Sync Task</a>
+            </div>
+
+            <div class="card">
+                <h2>Weather Service</h2>
+                {% if weather.city %}
+                    <p><strong>City:</strong> {{ weather.city }}</p>
+                    <p><strong>Temperature:</strong> {{ weather.temperature }}</p>
+                    <p><strong>Condition:</strong> {{ weather.condition }}</p>
+                {% else %}
+                    <p>Weather service unavailable.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="logout">
+            <a href="/logout/">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

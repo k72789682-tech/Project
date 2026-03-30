@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Task</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+        body{
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background:linear-gradient(135deg,#5b21b6,#7c3aed,#4f46e5);
+        }
+        .card{
+            width:450px;
+            padding:35px;
+            border-radius:24px;
+            background:rgba(255,255,255,0.12);
+            backdrop-filter:blur(18px);
+            border:1px solid rgba(255,255,255,0.15);
+            color:white;
+        }
+        h1{text-align:center;margin-bottom:30px;}
+        label{display:block;margin-bottom:8px;margin-top:15px;}
+        input,select,textarea{
+            width:100%;
+            padding:14px;
+            border:none;
+            border-radius:12px;
+            background:rgba(255,255,255,0.15);
+            color:white;
+            outline:none;
+        }
+        textarea{min-height:100px;resize:vertical;}
+        option{color:black;}
+        button,.back{
+            width:100%;
+            margin-top:20px;
+            padding:14px;
+            border:none;
+            border-radius:12px;
+            cursor:pointer;
+            text-decoration:none;
+            display:block;
+            text-align:center;
+            font-weight:bold;
+        }
+        button{background:white;color:#5b21b6;}
+        .back{background:rgba(255,255,255,0.15);color:white;}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Add New Task</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label>Task Title</label>
+            <input type="text" name="title" placeholder="Enter task title" required>
+
+            <label>Description</label>
+            <textarea name="description" placeholder="Enter task description"></textarea>
+
+            <label>Priority</label>
+            <select name="priority">
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+
+            <label>Due Date</label>
+            <input type="date" name="due_date">
+
+            <button type="submit">Create Task</button>
+        </form>
+
+        <a href="/dashboard/" class="back">Back to Dashboard</a>
+    </div>
+</body>
+</html>
