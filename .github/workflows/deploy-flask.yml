@@ -1,0 +1,68 @@
+name: Flask API CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'flask_api/**'
+      - '.github/workflows/deploy-flask.yml'
+
+jobs:
+  ci:
+    name: Flask Continuous Integration
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: flask_api
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Test Flask app import
+        run: |
+          python -c "from app import app"
+
+  cd:
+    name: Flask Continuous Deployment
+    needs: ci
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: flask_api
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create deployment package
+        run: |
+          zip -r ../flask-deploy.zip . \
+            -x "*.git*" \
+               "*__pycache__*" \
+               ".github/*" \
+               "venv/*"
+
+      - name: Deploy to Elastic Beanstalk
+        uses: aws-actions/elastic-beanstalk-deploy@v1
+        with:
+          application_name: ${{ secrets.EB_APPLICATION_NAME_FLASK }}
+          environment_name: ${{ secrets.EB_ENVIRONMENT_NAME_FLASK }}
+          version_label: flask-${{ github.sha }}
+          region: ${{ secrets.AWS_REGION }}
+          deployment_package: flask-deploy.zip
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

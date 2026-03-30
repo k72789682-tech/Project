@@ -1,0 +1,68 @@
+name: Django CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'django_frontend/**'
+      - '.github/workflows/deploy-django.yml'
+
+jobs:
+  ci:
+    name: Django Continuous Integration
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: django_frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Django checks
+        run: |
+          python manage.py check
+
+  cd:
+    name: Django Continuous Deployment
+    needs: ci
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: django_frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create deployment package
+        run: |
+          zip -r ../django-deploy.zip . \
+            -x "*.git*" \
+               "*__pycache__*" \
+               ".github/*" \
+               "venv/*"
+
+      - name: Deploy to Elastic Beanstalk
+        uses: aws-actions/elastic-beanstalk-deploy@v1
+        with:
+          application_name: ${{ secrets.EB_APPLICATION_NAME_DJANGO }}
+          environment_name: ${{ secrets.EB_ENVIRONMENT_NAME_DJANGO }}
+          version_label: django-${{ github.sha }}
+          region: ${{ secrets.AWS_REGION }}
+          deployment_package: django-deploy.zip
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

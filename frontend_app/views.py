@@ -1,7 +1,7 @@
 import requests
 from django.shortcuts import render, redirect
 
-API_URL = "http://127.0.0.1:8081"
+API_URL = "http://flask-api-env.eba-3cez76i2.us-east-1.elasticbeanstalk.com"
 
 
 def register_view(request):
