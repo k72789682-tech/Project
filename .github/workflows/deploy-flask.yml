@@ -46,11 +46,12 @@ jobs:
                "venv/*" \
                "*.pyc"
 
-      - name: Deploy to Elastic Beanstalk
+            - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v22
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_session_token: ${{ secrets.AWS_SESSION_TOKEN }}
           region: ${{ secrets.AWS_REGION }}
           application_name: ${{ secrets.EB_APPLICATION_NAME_FLASK }}
           environment_name: ${{ secrets.EB_ENVIRONMENT_NAME_FLASK }}
