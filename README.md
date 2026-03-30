@@ -6,3 +6,4 @@
 # Project
 # Project
 # trigger ci cd
+# retry django app name
