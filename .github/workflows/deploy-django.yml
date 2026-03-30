@@ -4,18 +4,11 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'django_frontend/**'
-      - '.github/workflows/deploy-django.yml'
 
 jobs:
   ci:
     name: Django Continuous Integration
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: django_frontend
 
     steps:
       - name: Checkout code
@@ -31,7 +24,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Django checks
+      - name: Run Django system check
         run: |
           python manage.py check
 
@@ -40,29 +33,26 @@ jobs:
     needs: ci
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: django_frontend
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Create deployment package
         run: |
-          zip -r ../django-deploy.zip . \
+          zip -r django-deploy.zip . \
             -x "*.git*" \
                "*__pycache__*" \
                ".github/*" \
-               "venv/*"
+               "venv/*" \
+               "*.pyc"
 
       - name: Deploy to Elastic Beanstalk
-        uses: aws-actions/elastic-beanstalk-deploy@v1
+        uses: einaregilsson/beanstalk-deploy@v22
         with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ${{ secrets.AWS_REGION }}
           application_name: ${{ secrets.EB_APPLICATION_NAME_DJANGO }}
           environment_name: ${{ secrets.EB_ENVIRONMENT_NAME_DJANGO }}
           version_label: django-${{ github.sha }}
-          region: ${{ secrets.AWS_REGION }}
           deployment_package: django-deploy.zip
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

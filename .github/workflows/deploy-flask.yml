@@ -4,18 +4,11 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'flask_api/**'
-      - '.github/workflows/deploy-flask.yml'
 
 jobs:
   ci:
     name: Flask Continuous Integration
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: flask_api
 
     steps:
       - name: Checkout code
@@ -40,29 +33,26 @@ jobs:
     needs: ci
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: flask_api
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Create deployment package
         run: |
-          zip -r ../flask-deploy.zip . \
+          zip -r flask-deploy.zip . \
             -x "*.git*" \
                "*__pycache__*" \
                ".github/*" \
-               "venv/*"
+               "venv/*" \
+               "*.pyc"
 
       - name: Deploy to Elastic Beanstalk
-        uses: aws-actions/elastic-beanstalk-deploy@v1
+        uses: einaregilsson/beanstalk-deploy@v22
         with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ${{ secrets.AWS_REGION }}
           application_name: ${{ secrets.EB_APPLICATION_NAME_FLASK }}
           environment_name: ${{ secrets.EB_ENVIRONMENT_NAME_FLASK }}
           version_label: flask-${{ github.sha }}
-          region: ${{ secrets.AWS_REGION }}
           deployment_package: flask-deploy.zip
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
