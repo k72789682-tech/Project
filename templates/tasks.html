@@ -31,6 +31,8 @@
             color:#5b21b6;
             margin-right:10px;
             font-weight:bold;
+            display:inline-block;
+            margin-bottom:10px;
         }
         table{
             width:100%;
@@ -56,6 +58,12 @@
             color:white;
             cursor:pointer;
         }
+        .bookmark-btn{
+            background:#facc15;
+            color:#1f2937;
+            cursor:pointer;
+            font-weight:bold;
+        }
     </style>
 </head>
 <body>
@@ -65,6 +73,7 @@
         <div class="top-buttons">
             <a href="/dashboard/">Dashboard</a>
             <a href="/add-task/">Add Task</a>
+            <a href="/bookmarks/">View Bookmarks</a>
         </div>
 
         <table>
@@ -75,6 +84,7 @@
                 <th>Priority</th>
                 <th>Due Date</th>
                 <th>Status</th>
+                <th>Bookmark</th>
                 <th>Delete</th>
             </tr>
 
@@ -96,6 +106,13 @@
                     </form>
                 </td>
                 <td>
+                    <form method="POST" action="/bookmark/{{ task.id }}/">
+                        {% csrf_token %}
+                        <input type="hidden" name="title" value="{{ task.title }}">
+                        <button class="bookmark-btn" type="submit">Bookmark</button>
+                    </form>
+                </td>
+                <td>
                     <form method="POST" action="/delete-task/{{ task.id }}/">
                         {% csrf_token %}
                         <button class="delete-btn" type="submit">Delete</button>
@@ -105,11 +122,5 @@
             {% endfor %}
         </table>
     </div>
-
-    <script>
-        setInterval(function() {
-            window.location.reload();
-        }, 5000);
-    </script>
 </body>
 </html>
