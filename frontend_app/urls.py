@@ -17,7 +17,7 @@ urlpatterns = [
     path('reminder/', views.reminder_view, name='reminder'),
     path('calendar-sync/', views.calendar_sync, name='calendar_sync'),
 
-    # Friend Bookmark API integration
+    # Classmate Bookmark API integration
     path('bookmark/<int:task_id>/', views.add_bookmark, name='add_bookmark'),
     path('bookmarks/', views.view_bookmarks, name='view_bookmarks'),
     path('delete-bookmark/<int:bookmark_id>/', views.delete_bookmark, name='delete_bookmark'),
